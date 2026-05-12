@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import requests
+from io import StringIO
 
 st.set_page_config(page_title="Global GDP Dashboard")
 
@@ -11,7 +12,6 @@ st.write(
     "Interactive stacked GDP visualization by region."
 )
 
-
 url = "https://en.wikipedia.org/wiki/List_of_countries_by_GDP_(nominal)"
 
 headers = {
@@ -20,16 +20,19 @@ headers = {
 
 response = requests.get(url, headers=headers)
 
-tables = pd.read_html(response.text)
+tables = pd.read_html(StringIO(response.text))
 
 df = tables[2]
-
 
 df = df.iloc[1:21]
 
 source = st.selectbox(
     "Select GDP Source",
-    ["IMF (2026)[1]", "World Bank (2024)[6]", "United Nations (2024)[7]"]
+    [
+        "IMF (2026)[1]",
+        "World Bank (2024)[6]",
+        "United Nations (2024)[7]"
+    ]
 )
 
 df = df.iloc[:, [0, list(df.columns).index(source)]]
